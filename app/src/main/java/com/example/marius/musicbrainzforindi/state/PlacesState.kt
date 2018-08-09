@@ -12,7 +12,7 @@ data class PlacesState(
 ) {
 
   sealed class Event {
-    class ShowProgress(val count: Int?) : Event()
+    class ShowProgress(val count: Int) : Event()
     object HideProgress : Event()
     class MarkersChanged(val markers: List<MarkerPlace>) : Event()
     class ZoomEvent(val markers: List<MarkerPlace>) : Event()
@@ -37,7 +37,7 @@ data class PlacesState(
             copy(effect = UiEffect(Effect.ZoomToLatLngBounds(bounds.build())))
           }
           event.markers.size == 1 -> {
-            val latLng = markers[0].coordinates
+            val latLng = event.markers[0].coordinates
             copy(effect = UiEffect(Effect.ZoomToLatLng(latLng)))
           }
           else -> this
