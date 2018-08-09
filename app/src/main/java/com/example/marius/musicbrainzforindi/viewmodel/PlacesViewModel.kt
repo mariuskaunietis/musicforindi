@@ -57,10 +57,10 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
 
         val pages =
           Math.ceil(response.count.toDouble() / ApiConfig.queryLimit.toDouble()).roundToInt()
-        for (i in 1..pages) {
+        for (i in 1 until pages) {
           updateState(PlacesState.Event.ShowProgress(i))
           val pageResponse = appService
-            .getPlaces(query = newQuery.toString(), offset = i * pages)
+            .getPlaces(query = newQuery.toString(), offset = i * ApiConfig.queryLimit)
             .blockingFirst()
           places.addAll(pageResponse.places)
         }
