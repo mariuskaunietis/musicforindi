@@ -1,0 +1,5 @@
+<resources>
+  <string name="app_name">Music Brainz For Indi</string>
+  <string name="title_activity_maps">Map</string>
+  <string name="searchHint">Search here</string>
+</resources>
