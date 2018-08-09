@@ -32,7 +32,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     whiteBox.orientation = LinearLayout.HORIZONTAL
 
-    me.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent))
+    me.setBackgroundColor(ContextCompat.getColor(this, R.color.colorProgress))
     whiteBox.setBackgroundResource(R.drawable.bg_rounded_white)
     whiteBox.elevation = 2.px
     me
@@ -40,10 +40,10 @@ abstract class BaseActivity : AppCompatActivity() {
   }
 
 
-  fun showProgress(message:String) {
+  fun showProgress(count:Int) {
     runOnUiThread {
       try {
-        progressText.text = message
+        progressText.text = getString(R.string.progress_page, count)
         val layoutParams =
           WindowManager.LayoutParams(WindowManager.LayoutParams.FIRST_SUB_WINDOW)
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT

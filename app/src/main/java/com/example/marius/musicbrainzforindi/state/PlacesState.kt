@@ -1,18 +1,18 @@
 package com.example.marius.musicbrainzforindi.state
 
 import com.example.marius.musicbrainzforindi.api.model.MarkerPlace
-import com.example.marius.musicbrainzforindi.api.model.Place
 import com.example.marius.musicbrainzforindi.utils.UiEffect
 
 data class PlacesState(
-  val progressMessage: String? = null,
-  val markers: List<MarkerPlace>,
+  val progressCount: Int? = null,
+  val markers: List<MarkerPlace> = emptyList(),
   val effect: UiEffect<Effect>? = null
 ) {
 
   sealed class Event {
-    class ShowProgress(val message: String?) : Event()
+    class ShowProgress(val count: Int?) : Event()
     object HideProgress : Event()
+    class MarkersChanged(val markers: List<MarkerPlace>) : Event()
   }
 
 
@@ -23,8 +23,9 @@ data class PlacesState(
 
   fun reduce(event: Event): PlacesState {
     return when (event) {
-      is PlacesState.Event.ShowProgress -> copy(progressMessage = event.message)
-      PlacesState.Event.HideProgress -> copy(progressMessage = null)
+      is Event.ShowProgress -> copy(progressCount = event.count)
+      Event.HideProgress -> copy(progressCount = null)
+      is Event.MarkersChanged -> copy(markers = event.markers)
     }
   }
 

@@ -2,4 +2,8 @@
   <string name="app_name">Music Brainz For Indi</string>
   <string name="title_activity_maps">Map</string>
   <string name="searchHint">Search here</string>
+  <string name="progress_0">Loading…</string>
+  <string name="progress_page">Loading page %1$d</string>
+
+
 </resources>

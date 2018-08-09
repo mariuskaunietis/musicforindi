@@ -11,7 +11,8 @@ interface AppService {
   fun getPlaces(
     @Query("query") query: String,
     @Query("fmt") format: String = "json",
-    @Query("limit") limit: Int = ApiConfig.queryLimit
+    @Query("limit") limit: Int = ApiConfig.queryLimit,
+    @Query("offset") offset: Int = 0
   ): Observable<PlacesResponse>
 
 
