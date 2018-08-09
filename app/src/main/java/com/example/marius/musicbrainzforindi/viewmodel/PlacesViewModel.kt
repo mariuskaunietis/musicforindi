@@ -97,6 +97,7 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
       }
     _places.clear()
     _places.addAll(newMarkers)
+    updateState(PlacesState.Event.ZoomEvent(newMarkers))
     updateState(PlacesState.Event.MarkersChanged(newMarkers))
 
   }

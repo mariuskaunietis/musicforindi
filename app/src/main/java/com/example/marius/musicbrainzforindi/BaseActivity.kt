@@ -40,7 +40,7 @@ abstract class BaseActivity : AppCompatActivity() {
   }
 
 
-  fun showProgress(count:Int) {
+  fun showProgress(count: Int) {
     runOnUiThread {
       try {
         progressText.text = getString(R.string.progress_page, count)

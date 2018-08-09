@@ -4,7 +4,9 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import com.example.marius.musicbrainzforindi.state.PlacesState
+import com.example.marius.musicbrainzforindi.utils.px
 import com.example.marius.musicbrainzforindi.viewmodel.PlacesViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -15,6 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 
 class MapsActivity : BaseActivity(), OnMapReadyCallback {
@@ -72,6 +75,20 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback {
         googleMap.addMarker(MarkerOptions().position(markerPlace.coordinates).title(markerPlace.name))
       }
     }
+    val effect = placesState.effect?.getContentIfNotHandled()
+    when (effect) {
+      is PlacesState.Effect.ZoomToLatLng -> {
+        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(effect.latLng, effect.zoom))
+      }
+      is PlacesState.Effect.ZoomToLatLngBounds -> {
+        val padding = 50.px.roundToInt()
+        googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(effect.bounds, padding))
+      }
+      null -> {
+        //do nothing
+      }
+    }
+
   }
 
   override fun onStop() {
