@@ -1,6 +1,6 @@
 package com.example.marius.musicbrainzforindi.api
 
-import com.example.marius.musicbrainzforindi.api.model.PlacesResponse
+import com.mediapark.saco.mpp.mobile.places.model.PlacesResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query

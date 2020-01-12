@@ -1,5 +1,7 @@
 package com.example.marius.musicbrainzforindi.api.model
 
+import com.mediapark.saco.mpp.mobile.places.model.Coordinates
+import com.mediapark.saco.mpp.mobile.places.model.LifeSpan
 import com.squareup.moshi.Json
 
 class Place(

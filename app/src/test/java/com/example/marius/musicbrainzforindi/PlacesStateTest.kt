@@ -1,6 +1,6 @@
 package com.example.marius.musicbrainzforindi
 
-import com.example.marius.musicbrainzforindi.api.model.MarkerPlace
+import com.mediapark.saco.mpp.mobile.places.model.ExpiringPlace
 import com.example.marius.musicbrainzforindi.state.PlacesState
 import com.google.android.gms.maps.model.LatLng
 import org.junit.Assert.assertEquals
@@ -47,10 +47,10 @@ class PlacesStateTest {
   }
 
 
-  private fun getMockMarker(): List<MarkerPlace> {
-    val markers = mutableListOf<MarkerPlace>()
+  private fun getMockMarker(): List<ExpiringPlace> {
+    val markers = mutableListOf<ExpiringPlace>()
     markers.add(
-      MarkerPlace(
+      ExpiringPlace(
         name = "first",
         coordinates = LatLng(20.0, 54.0),
         expiresAt = System.currentTimeMillis() + 1000
@@ -59,17 +59,17 @@ class PlacesStateTest {
     return markers
   }
 
-  private fun get2MockMarkers(): List<MarkerPlace> {
-    val markers = mutableListOf<MarkerPlace>()
+  private fun get2MockMarkers(): List<ExpiringPlace> {
+    val markers = mutableListOf<ExpiringPlace>()
     markers.add(
-      MarkerPlace(
+      ExpiringPlace(
         name = "first",
         coordinates = LatLng(20.0, 54.0),
         expiresAt = System.currentTimeMillis() + 1000
       )
     )
     markers.add(
-      MarkerPlace(
+      ExpiringPlace(
         name = "second",
         coordinates = LatLng(24.0, 51.0),
         expiresAt = System.currentTimeMillis() + 2000
