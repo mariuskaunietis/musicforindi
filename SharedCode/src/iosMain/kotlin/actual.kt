@@ -33,3 +33,10 @@ private class IosScope : CoroutineScope {
 actual fun coroutineScope(): CoroutineScope {
     return IosScope()
 }
+actual fun Throwable.printStackTrace() {
+    print(this.getStackTrace())
+}
+
+actual fun getTimestamp(): Long {
+    TODO("Not implemented")
+}

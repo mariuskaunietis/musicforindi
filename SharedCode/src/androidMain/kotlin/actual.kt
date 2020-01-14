@@ -14,3 +14,7 @@ actual fun coroutineScope(): CoroutineScope {
 actual fun getTimestamp(): Long {
     return System.currentTimeMillis() / 1000L
 }
+
+actual fun Throwable.printStackTrace() {
+    printStackTrace()
+}

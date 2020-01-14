@@ -8,16 +8,18 @@ import com.mediapark.saco.mpp.mobile.places.model.ExpiringPlace
 import com.mediapark.saco.mpp.mobile.places.model.PlacesResponse
 
 data class PlacesState(
-    private val markers: List<ExpiringPlace> = emptyList(),
+    val markers: List<ExpiringPlace> = emptyList(),
     private val page: Int = 0,
     private val query: String = "",
     val command: Command? = null,
-    val request: Request? = null
+    val request: Request? = null,
+    val isLoading: Boolean = false
 ) : State<PlacesState, PlacesState.Event> {
 
     sealed class Event {
         data class TypedText(val newText: String) : Event()
         object RequestFailed : Event()
+        object TickedClock : Event()
         data class FetchedPage(val places: PlacesResponse) : Event()
     }
 
@@ -34,13 +36,13 @@ data class PlacesState(
             is Event.TypedText -> copy(
                 page = 0,
                 query = event.newText,
-                request = Request.LoadPage(0, event.newText)
+                request = Request.LoadPage(0, event.newText),
+                isLoading = true
             )
             Event.RequestFailed -> {
-                this
+                copy(isLoading = false)
             }
             is Event.FetchedPage -> {
-
                 val nextPage = page + 1
                 val newMarkers = if (page == 0) {
                     event.places.markerPlaces(getTimestamp())
@@ -66,8 +68,13 @@ data class PlacesState(
                     page = page + 1,
                     request = nextRequest,
                     command = nextCommand,
-                    markers = newMarkers
+                    markers = newMarkers,
+                    isLoading = willLoadMore
                 )
+            }
+            Event.TickedClock -> {
+                val timestamp = getTimestamp()
+                copy(markers = markers.filter { !it.isExpired(timestamp) })
             }
         }
     }

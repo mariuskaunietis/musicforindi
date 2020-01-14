@@ -1,18 +1,22 @@
 package com.example.marius.musicbrainzforindi
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.example.marius.musicbrainzforindi.base.BaseFragment
 import com.example.marius.musicbrainzforindi.base.ViewModelAware
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mediapark.saco.mpp.mobile.ViewModel
 import com.mediapark.saco.mpp.mobile.places.PlacesState
 import com.mediapark.saco.mpp.mobile.places.PlacesViewModel
 import com.mediapark.saco.mpp.mobile.places.model.Coordinates
+import io.reactivex.Observable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_maps.*
 import java.util.concurrent.TimeUnit
@@ -30,17 +34,45 @@ class PlacesFragment : BaseFragment(), ViewModelAware<PlacesState, PlacesState.E
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mapView.onCreate(savedInstanceState)
+        map_view.onCreate(savedInstanceState)
 
-        vm.setListener { _, newState ->
+        vm.setListener { boundState, newState ->
             when (val command = newState.command) {
                 is PlacesState.Command.ZoomToMarkers -> {
-                    mapView.getMapAsync { googleMap ->
+                    doOnGoogleMap { googleMap ->
                         zoomGoogleMap(googleMap, command.coordinates)
                     }
                 }
             }
+            if (boundState?.markers != newState.markers) {
+                doOnGoogleMap { googleMap ->
+                    googleMap.clear()
+                    newState.markers.forEach {
+                        val marker = MarkerOptions()
+                            .position(it.coordinates.latLng())
+                            .title(it.name)
+                        googleMap.addMarker(marker)
+                    }
+                }
+            }
+            if (boundState?.isLoading != newState.isLoading) {
+                doOnUI {
+                    if (newState.isLoading) {
+                        progress_overlay.visibility = View.VISIBLE
+                        hideKeyboard()
+                    } else {
+                        progress_overlay.visibility = View.GONE
+                    }
+
+                }
+            }
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(search.windowToken, 0)
     }
 
     private fun zoomGoogleMap(googleMap: GoogleMap, coordinates: List<Coordinates>) {
@@ -61,7 +93,15 @@ class PlacesFragment : BaseFragment(), ViewModelAware<PlacesState, PlacesState.E
 
     override fun onStart() {
         super.onStart()
-        mapView.onStart()
+        map_view.onStart()
+
+        Observable
+            .interval(1, TimeUnit.SECONDS)
+            .subscribe {
+                vm.transition(PlacesState.Event.TickedClock)
+            }
+            .addTo(disposable)
+
 
         RxTextView.textChanges(search)
             .skipInitialValue()
@@ -74,26 +114,38 @@ class PlacesFragment : BaseFragment(), ViewModelAware<PlacesState, PlacesState.E
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        map_view.onResume()
     }
 
     override fun onPause() {
-        mapView.onPause()
+        map_view.onPause()
         super.onPause()
     }
 
     override fun onStop() {
-        mapView.onStop()
+        map_view.onStop()
         super.onStop()
     }
 
     override fun onDestroyView() {
-        mapView.onDestroy()
+        map_view.onDestroy()
         super.onDestroyView()
     }
 
     override fun onLowMemory() {
-        mapView.onLowMemory()
+        map_view.onLowMemory()
         super.onLowMemory()
+    }
+
+    private fun doOnUI(callback: () -> Unit) {
+        requireActivity().runOnUiThread {
+            callback()
+        }
+    }
+
+    private fun doOnGoogleMap(callback: (GoogleMap) -> Unit) {
+        doOnUI {
+            map_view.getMapAsync { callback(it) }
+        }
     }
 }

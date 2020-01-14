@@ -2,6 +2,7 @@ package com.mediapark.saco.mpp.mobile.places
 
 import com.mediapark.saco.mpp.mobile.ViewModel
 import com.mediapark.saco.mpp.mobile.api.Constants
+import com.mediapark.saco.mpp.mobile.printStackTrace
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
@@ -53,8 +54,7 @@ class PlacesViewModel : ViewModel<PlacesState, PlacesState.Event>(PlacesState())
         try {
             machine.transition(PlacesState.Event.FetchedPage(client.get(builder)))
         } catch (e: Throwable) {
-            throw e
-            println(e)
+            e.printStackTrace()
             machine.transition(PlacesState.Event.RequestFailed)
         }
     }

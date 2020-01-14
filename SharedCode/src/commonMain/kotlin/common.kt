@@ -7,3 +7,5 @@ expect fun platformName(): String
 expect fun getTimestamp(): Long
 
 expect fun coroutineScope(): CoroutineScope
+
+expect fun Throwable.printStackTrace()
